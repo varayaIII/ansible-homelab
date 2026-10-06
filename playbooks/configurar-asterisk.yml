@@ -1,0 +1,25 @@
+- name: Configurar Asterisk con templates
+  hosts: asterisk
+  become: yes
+  vars_files:
+    - ../inventario/vars.yml
+  tasks:
+    - name: Desplegar pjsip.conf
+      ansible.builtin.template:
+        src: ../templates/pjsip.conf.j2
+        dest: /etc/asterisk/pjsip.conf
+        owner: asterisk
+        group: asterisk
+        mode: '0640'
+
+    - name: Desplegar extensions.conf
+      ansible.builtin.template:
+        src: ../templates/extensions.conf.j2
+        dest: /etc/asterisk/extensions.conf
+        owner: asterisk
+        group: asterisk
+        mode: '0640'
+
+    - name: Recargar Asterisk
+      ansible.builtin.shell:
+        cmd: asterisk -rx "core reload"

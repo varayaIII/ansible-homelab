@@ -1,0 +1,9 @@
+[general]
+
+[sets]
+{% for extension in extensiones %}
+exten => {{ extension.numero }},1,NoOp(Llamada entrante a {{ extension.numero }})
+same => n,Dial(PJSIP/{{ extension.numero }},20)
+same => n,VoiceMail({{ extension.numero }}@default,u)
+same => n,Hangup()
+{% endfor %}

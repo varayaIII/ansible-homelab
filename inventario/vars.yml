@@ -1,0 +1,5 @@
+extensiones:
+  - numero: "101"
+    password: "clave101"
+  - numero: "102"
+    password: "clave102"
