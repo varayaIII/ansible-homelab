@@ -3,6 +3,7 @@
   become: yes
   vars_files:
     - ../inventario/vars.yml
+    - ../inventario/secrets.yml
   tasks:
     - name: Desplegar pjsip.conf
       ansible.builtin.template:
