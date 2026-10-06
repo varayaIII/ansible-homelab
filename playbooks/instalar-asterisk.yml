@@ -1,0 +1,30 @@
+- name: Instalar Asterisk en nodos
+  hosts: asterisk
+  become: true
+  tasks:
+    - name: Actualizar repositorios
+      ansible.builtin.apt:
+        update_cache: true
+    - name: Instalar dependencias
+      ansible.builtin.apt:
+        name:
+          - build-essential
+          - wget
+          - curl
+          - git
+          - libssl-dev
+          - libncurses5-dev
+          - libnewt-dev
+          - libxml2-dev
+          - libsqlite3-dev
+          - uuid-dev
+        state: present
+    - name: Instalar Asterisk
+      ansible.builtin.apt:
+        name: asterisk
+        state: present
+    - name: Iniciar y habilitar servicio Asterisk
+      ansible.builtin.service:
+        name: asterisk
+        state: started
+        enabled: true

@@ -1,0 +1,42 @@
+---
+- name: Instalar Kamailio en proxy
+  hosts: kamailio
+  become: true
+  tasks:
+    - name: Instalar dependencias previas
+      ansible.builtin.apt:
+        name:
+          - gnupg2
+          - curl
+        state: present
+        update_cache: true
+
+    - name: Agregar clave GPG de Kamailio
+      ansible.builtin.shell:
+        cmd: curl -fsSL https://deb.kamailio.org/kamailiodebkey.gpg | gpg --dearmor -o /usr/share/keyrings/kamailio.gpg
+        creates: /usr/share/keyrings/kamailio.gpg
+
+    - name: Agregar repositorio oficial de Kamailio
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/kamailio.gpg] https://deb.kamailio.org/kamailio57 jammy main"
+        state: present
+        filename: kamailio
+
+    - name: Actualizar repositorios
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Instalar Kamailio y modulos basicos
+      ansible.builtin.apt:
+        name:
+          - kamailio
+          - kamailio-mysql-modules
+          - kamailio-tls-modules
+          - kamailio-websocket-modules
+        state: present
+
+    - name: Iniciar y habilitar servicio Kamailio
+      ansible.builtin.service:
+        name: kamailio
+        state: started
+        enabled: true
