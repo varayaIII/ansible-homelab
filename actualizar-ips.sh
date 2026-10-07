@@ -26,4 +26,10 @@ ansible_ssh_private_key_file=~/projects/ansible-homelab/ansible-homelab.pem
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 EOF
 
+echo ""
+echo "⚠️ RECUERDA actualizar el ACL de Twilio con las nuevas IPs:"
+echo " asterisk-nodo1: $NODO1/32"
+echo " asterisk-nodo2: $NODO2/32"
+echo " URL: https://console.twilio.com -> Elastic SIP Trunking -> Trunks -> asterisk-homelab -> Termination"
+echo ""
 echo "Inventario actualizado!"
