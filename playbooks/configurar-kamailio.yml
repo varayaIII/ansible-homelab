@@ -1,0 +1,33 @@
+---
+- name: Configurar Kamailio como SIP proxy
+  hosts: kamailio
+  become: true
+  tasks:
+    - name: Crear directorio dispatcher
+      ansible.builtin.file:
+        path: /etc/kamailio/dispatcher
+        state: directory
+        owner: kamailio
+        group: kamailio
+        mode: '0750'
+
+    - name: Desplegar configuracion de Kamailio
+      ansible.builtin.template:
+        src: ../templates/kamailio.cfg.j2
+        dest: /etc/kamailio/kamailio.cfg
+        owner: kamailio
+        group: kamailio
+        mode: '0640'
+
+    - name: Desplegar lista de dispatcher
+      ansible.builtin.template:
+        src: ../templates/dispatcher.list.j2
+        dest: /etc/kamailio/dispatcher/dispatcher.list
+        owner: kamailio
+        group: kamailio
+        mode: '0640'
+
+    - name: Reiniciar Kamailio
+      ansible.builtin.service:
+        name: kamailio
+        state: restarted
