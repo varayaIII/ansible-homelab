@@ -1,0 +1,63 @@
+#!KAMAILIO
+
+####### Global Parameters #########
+debug=2
+log_stderror=no
+log_facility=LOG_LOCAL0
+fork=yes
+children=4
+
+listen=udp:0.0.0.0:5060
+
+####### Modules Section ########
+loadmodule "kex.so"
+loadmodule "corex.so"
+loadmodule "tm.so"
+loadmodule "sl.so"
+loadmodule "rr.so"
+loadmodule "pv.so"
+loadmodule "maxfwd.so"
+loadmodule "textops.so"
+loadmodule "dispatcher.so"
+loadmodule "xlog.so"
+
+####### Dispatcher Parameters #######
+modparam("dispatcher", "db_url", "text:///etc/kamailio/dispatcher")
+modparam("dispatcher", "ds_ping_interval", 10)
+modparam("dispatcher", "ds_probing_mode", 1)
+
+####### Routing Logic ########
+request_route {
+if (!mf_process_maxfwd_header("10")) {
+sl_send_reply("483","Too Many Hops");
+exit;
+}
+
+if (is_method("REGISTER")) {
+    if (!ds_select_dst("1", "4")) {
+        sl_send_reply("503", "Service Unavailable");
+        exit;
+    }
+    forward();
+    exit;
+}
+
+if (!ds_select_dst("1", "4")) {
+    sl_send_reply("503", "Service Unavailable");
+    exit;
+}
+
+t_relay();
+exit;
+
+}
+
+onreply_route {
+t_on_reply("1");
+}
+
+onreply_route[1] {
+if (t_check_status("408|5[0-9][0-9]")) {
+ds_mark_dst("ip");
+}
+}
