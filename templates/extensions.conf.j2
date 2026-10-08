@@ -16,5 +16,5 @@ same => n,Hangup()
 [sets]
 exten => _9.,1,NoOp(Llamada saliente via Twilio)
 same => n,Set(CALLERID(num)={{ twilio_numero }})
-same => n,Dial(PJSIP/twilio-trunk/sip:${EXTEN:1}@{{ twilio_host }})
+same => n,Dial(PJSIP/twilio-trunk/sip:+${EXTEN:1}@{{ twilio_host }})
 same => n,Hangup()
